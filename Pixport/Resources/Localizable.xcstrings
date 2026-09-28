@@ -1413,23 +1413,6 @@
         }
       }
     },
-    "settings.estimate.working": {
-      "extractionState": "manual",
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "liczę…"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "estimating…"
-          }
-        }
-      }
-    },
     "settings.format": {
       "extractionState": "manual",
       "localizations": {

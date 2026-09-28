@@ -220,7 +220,7 @@ struct SettingsView: View {
         // dobrze, bo pod spodem przesuwają się kadry. Nad formularzem kładło tekst na
         // tekst i obie warstwy stawały się nieczytelne.
         GlassActionBar(backdrop: .opaque) {
-            Text(summaryText)
+            summaryContent
         } action: {
             Button {
                 request = JobRequest(photos: photos, settings: settings)
@@ -231,22 +231,33 @@ struct SettingsView: View {
         }
     }
 
-    /// „47 zdjęć · ~14 MB", a w trakcie liczenia „47 zdjęć · liczę…".
+    /// „47 zdjęć · ~14 MB", a w trakcie liczenia to samo z kręciołkiem obok.
+    ///
+    /// **Poprzednia wartość zostaje na ekranie, dopóki nie przyjdzie nowa.** Wcześniej
+    /// liczba znikała na rzecz słowa „liczę…" i wracała po chwili — przy każdym ruchu
+    /// suwaka jakości kapsuła migała i zmieniała szerokość. Teraz zmienia się tylko
+    /// sama liczba, a kręciołek mówi, że jest odświeżana.
     ///
     /// Tylda jest celowa: rozmiar JPEG zależy od treści zdjęcia, więc przy mieszanym
     /// zaznaczeniu potrafi się rozjechać. Informacja, że szacunek jest wyjątkowo zgrubny
     /// (bo nie było czego zmierzyć), trafia do stopki sekcji „Rozmiar" — czyli tam, gdzie
-    /// stoją ustawienia, z których ta liczba wynika. W kapsule nie zmieściłaby się bez
-    /// wypchnięcia przycisku poza ekran.
-    private var summaryText: String {
-        let count = L.f("settings.summary.count", photos.count)
-        if estimate.isEstimating {
-            return "\(count) · \(L.s("settings.estimate.working"))"
+    /// stoją ustawienia, z których ta liczba wynika.
+    @ViewBuilder
+    private var summaryContent: some View {
+        HStack(spacing: 6) {
+            Text(L.f("settings.summary.count", photos.count))
+
+            if let value = estimate.estimate {
+                Text(verbatim: "·")
+                    .foregroundStyle(.secondary)
+                Text(L.f("settings.estimate.value", ByteFormatting.string(value.bytes)))
+            }
+
+            if estimate.isEstimating {
+                ProgressView()
+                    .controlSize(.mini)
+            }
         }
-        if let value = estimate.estimate {
-            return "\(count) · \(L.f("settings.estimate.value", ByteFormatting.string(value.bytes)))"
-        }
-        return count
     }
 
     // MARK: - Pomocnicze

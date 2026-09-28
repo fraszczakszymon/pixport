@@ -37,5 +37,8 @@ final class EstimateModel {
     func cancel() {
         task?.cancel()
         task = nil
+        // Zadanie przerwane przed końcem nie zdąży zgasić wskaźnika samo — bez tego
+        // kręciołek kręciłby się w nieskończoność po powrocie na ekran.
+        isEstimating = false
     }
 }
