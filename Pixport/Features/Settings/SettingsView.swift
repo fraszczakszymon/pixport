@@ -11,6 +11,14 @@ struct SettingsView: View {
     @Environment(SettingsStore.self) private var store
     @State private var estimate = EstimateModel()
     @State private var customLongEdge = ""
+    /// Czy użytkownik jest w trybie własnej wartości.
+    ///
+    /// Musi być jawnym stanem, a nie wnioskiem z zapisanej liczby pikseli. Przy
+    /// wnioskowaniu „Custom" nie miał jak się utrzymać: wybranie go zapisywało bieżącą
+    /// wartość, a getter natychmiast rozpoznawał ją z powrotem jako preset i picker
+    /// wracał do poprzedniej pozycji. Pole do wpisania nigdy się nie pokazywało.
+    @State private var usesCustomLongEdge = false
+    @FocusState private var customFieldFocused: Bool
     @State private var request: JobRequest?
 
     private var settings: ConversionSettings { store.settings }
@@ -27,6 +35,14 @@ struct SettingsView: View {
         }
         .navigationTitle(L.s("settings.title"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            // Klawiatura numeryczna nie ma klawisza powrotu, więc bez tego przycisku
+            // nie da się jej zamknąć i zasłania pół formularza.
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button(L.s("common.done")) { customFieldFocused = false }
+            }
+        }
         .safeAreaInset(edge: .bottom) { actionBar }
         .navigationDestination(item: $request) { request in
             ProcessingScreen(request: request)
@@ -37,6 +53,7 @@ struct SettingsView: View {
             // obok ustawienia, które realnie obowiązuje.
             if let pixels = settings.targetSize.pixels, !TargetSize.presetValues.contains(pixels) {
                 customLongEdge = String(pixels)
+                usesCustomLongEdge = true
             }
             refreshEstimate()
         }
@@ -77,7 +94,7 @@ struct SettingsView: View {
                 Text(L.s("settings.longEdge.custom")).tag(LongEdgeChoice.custom)
             }
 
-            if longEdgeBinding.wrappedValue == .custom {
+            if usesCustomLongEdge {
                 HStack {
                     Text(L.s("settings.longEdge.customValue"))
                     Spacer()
@@ -85,9 +102,14 @@ struct SettingsView: View {
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                         .frame(width: 90)
+                        .focused($customFieldFocused)
                         .onChange(of: customLongEdge) { _, value in
-                            if let number = Int(value), number > 0 {
-                                store.settings.targetSize = .longEdge(min(number, 20000))
+                            // Filtrujemy w locie: klawiatura numeryczna nie wpuszcza liter,
+                            // ale wklejenie owszem.
+                            let digits = value.filter(\.isNumber)
+                            if digits != value { customLongEdge = digits }
+                            if let number = Int(digits), number > 0 {
+                                store.settings.targetSize = .longEdge(min(number, Self.maxLongEdge))
                             }
                         }
                     Text("px").foregroundStyle(.secondary)
@@ -239,25 +261,34 @@ struct SettingsView: View {
         case custom
     }
 
+    /// Górna granica własnej wartości. Powyżej tego i tak nie ma zdjęć, a pole bez
+    /// ograniczenia zaprasza do wpisania liczby, przy której skalowanie zabija pamięć.
+    private static let maxLongEdge = 20000
+
     private var longEdgeBinding: Binding<LongEdgeChoice> {
         Binding(
             get: {
+                if usesCustomLongEdge { return .custom }
                 switch settings.targetSize {
-                case .original: .original
+                case .original: return .original
                 case .longEdge(let value):
-                    TargetSize.presetValues.contains(value) ? .preset(value) : .custom
+                    return TargetSize.presetValues.contains(value) ? .preset(value) : .custom
                 }
             },
             set: { choice in
                 switch choice {
                 case .original:
+                    usesCustomLongEdge = false
                     store.settings.targetSize = .original
                 case .preset(let value):
+                    usesCustomLongEdge = false
                     store.settings.targetSize = .longEdge(value)
                 case .custom:
+                    usesCustomLongEdge = true
                     let current = settings.targetSize.pixels ?? 2000
                     customLongEdge = String(current)
                     store.settings.targetSize = .longEdge(current)
+                    customFieldFocused = true
                 }
             }
         )
