@@ -79,7 +79,14 @@ a cofnięcie pomyłki wymaga drugiego.
 **Pas akcji** to dwie pływające kapsuły w stylu iOS 26, a nie jeden pas przez całą
 szerokość: po lewej podsumowanie („47 zdjęć · 182 MB"), po prawej przejście dalej.
 Ten sam komponent obsługuje galerię i ekran ustawień — oba kroki mają wyglądać jak jedna
-aplikacja, a nie jak dwie.
+aplikacja, a nie jak dwie. Różni je tylko tło: **nad siatką zdjęć kapsuły pływają**
+(przesuwające się pod szkłem kadry wyglądają żywo), **nad formularzem mają
+nieprzezroczyste tło** przez całą szerokość. Półprzezroczyste szkło kładło tam tekst na
+tekst i obie warstwy stawały się nieczytelne — zdjęcia prześwitują ładnie, litery nie.
+
+Pas wchodzi w margines wskaźnika ekranu głównego, tak jak systemowe paski pływające
+w iOS 26. Oparty dokładnie na granicy bezpiecznego obszaru wyglądał na zawieszony wysoko:
+odstęp od dołu wychodził ponad trzy razy większy niż od boków.
 Zawartość przewija się pod nimi, bo szkło jest półprzezroczyste.
 
 **Wysokość pasa jest stała** — także przy pustym zaznaczeniu, gdy kapsuł po prostu nie ma.

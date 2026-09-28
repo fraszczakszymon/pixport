@@ -216,7 +216,10 @@ struct SettingsView: View {
     // MARK: - Pasek akcji
 
     private var actionBar: some View {
-        GlassActionBar {
+        // Nieprzezroczyste tło, w odróżnieniu od galerii. Nad siatką zdjęć szkło wygląda
+        // dobrze, bo pod spodem przesuwają się kadry. Nad formularzem kładło tekst na
+        // tekst i obie warstwy stawały się nieczytelne.
+        GlassActionBar(backdrop: .opaque) {
             Text(summaryText)
         } action: {
             Button {
