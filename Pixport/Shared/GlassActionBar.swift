@@ -49,10 +49,10 @@ struct GlassActionBar<Summary: View, Action: View>: View {
             .padding(.horizontal, GlassBar.sideMargin)
         }
         // Kapsuły przy dolnej krawędzi zarezerwowanego pasa, nie na jego środku.
-        // Wyśrodkowane zostawiały pod sobą kilkanaście punktów luzu, które dokładały się
-        // do obszaru wskaźnika ekranu głównego — odstęp od dołu wychodził ponad trzy razy
-        // większy niż od boków.
         .frame(height: GlassBar.contentHeight, alignment: .bottom)
+        // Oddech nad kapsułami. Bez niego zawartość kończyła się dokładnie na ich
+        // krawędzi i pas wyglądał na doklejony do siatki, zamiast nad nią leżeć.
+        .padding(.top, GlassBar.topMargin)
         .padding(.bottom, GlassBar.bottomMargin)
         .background {
             if backdrop == .opaque {
@@ -66,9 +66,13 @@ struct GlassActionBar<Summary: View, Action: View>: View {
     }
 }
 
+/// Odstępy pasa, odmierzone z systemowych Zdjęć.
 enum GlassBar {
     /// Wysokość kapsuł — tyle, ile zajmuje przycisk w rozmiarze `.large`.
     static let contentHeight: CGFloat = 52
+
+    /// Przerwa między zawartością ekranu a kapsułami.
+    static let topMargin: CGFloat = 16
     /// Przesunięcie w dół względem granicy bezpiecznego obszaru — wartość UJEMNA.
     ///
     /// Granica bezpiecznego obszaru leży ok. 34 pt nad dolną krawędzią ekranu, więc pas
@@ -77,10 +81,10 @@ enum GlassBar {
     /// wchodzą w ten margines i tak samo robimy tutaj, zostawiając wskaźnik ekranu
     /// głównego odsłonięty.
     static let bottomMargin: CGFloat = -16
-    static let sideMargin: CGFloat = 16
+    static let sideMargin: CGFloat = 24
 
     /// Miejsce rezerwowane u dołu ekranu, niezależnie od tego, czy kapsuły są widoczne.
-    static var height: CGFloat { contentHeight + bottomMargin }
+    static var height: CGFloat { topMargin + contentHeight + bottomMargin }
 }
 
 /// Etykieta akcji: tekst ze strzałką, wspólna dla „Dalej" i „Przetwórz".
