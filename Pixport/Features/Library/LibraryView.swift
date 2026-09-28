@@ -194,6 +194,7 @@ private struct PhotoCell: View {
 /// zamiast spokojnie reagować.
 private struct SelectionBar: View {
     @Environment(PhotoLibraryModel.self) private var library
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     private var count: Int { library.selection.count }
 
@@ -216,7 +217,7 @@ private struct SelectionBar: View {
                     }
                 }
             } else {
-                Color.clear.frame(height: GlassBar.height)
+                Color.clear.frame(height: GlassBar.height(compactHeight: verticalSizeClass == .compact))
             }
         }
         .animation(.snappy(duration: 0.25), value: count)

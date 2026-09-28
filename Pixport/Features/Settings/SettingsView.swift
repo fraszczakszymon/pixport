@@ -18,7 +18,14 @@ struct SettingsView: View {
     /// wartość, a getter natychmiast rozpoznawał ją z powrotem jako preset i picker
     /// wracał do poprzedniej pozycji. Pole do wpisania nigdy się nie pokazywało.
     @State private var usesCustomLongEdge = false
-    @FocusState private var customFieldFocused: Bool
+    @FocusState private var focusedField: Field?
+
+    /// Pola tekstowe ekranu. Jeden wspólny stan zamiast osobnego na pole, bo pas akcji
+    /// musi wiedzieć, czy klawiatura jest otwarta — obojętnie przez które z nich.
+    private enum Field {
+        case longEdge
+        case namePrefix
+    }
     @State private var request: JobRequest?
 
     private var settings: ConversionSettings { store.settings }
@@ -40,10 +47,19 @@ struct SettingsView: View {
             // nie da się jej zamknąć i zasłania pół formularza.
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button(L.s("common.done")) { customFieldFocused = false }
+                Button(L.s("common.done")) { focusedField = nil }
             }
         }
-        .safeAreaInset(edge: .bottom) { actionBar }
+        // Pas akcji znika przy otwartej klawiaturze. Przycisk „Gotowe" z paska klawiatury
+        // siada dokładnie w rogu, w którym stoi „Przetwórz" — dwa przyciski jeden na
+        // drugim, oba klikalne. Chowanie pasa jest właściwsze niż przesuwanie go w bok:
+        // przy otwartej klawiaturze i tak nie ma co przetwarzać, dopóki użytkownik pisze.
+        .safeAreaInset(edge: .bottom) {
+            if focusedField == nil {
+                actionBar
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: focusedField)
         .navigationDestination(item: $request) { request in
             ProcessingScreen(request: request)
         }
@@ -102,7 +118,7 @@ struct SettingsView: View {
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                         .frame(width: 90)
-                        .focused($customFieldFocused)
+                        .focused($focusedField, equals: .longEdge)
                         .onChange(of: customLongEdge) { _, value in
                             // Filtrujemy w locie: klawiatura numeryczna nie wpuszcza liter,
                             // ale wklejenie owszem.
@@ -181,6 +197,9 @@ struct SettingsView: View {
             TextField(L.s("settings.name.placeholder"), text: $store.settings.namePrefix)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.words)
+                .focused($focusedField, equals: .namePrefix)
+                .submitLabel(.done)
+                .onSubmit { focusedField = nil }
         } header: {
             Text(L.s("settings.section.name"))
         } footer: {
@@ -302,7 +321,7 @@ struct SettingsView: View {
                     let current = settings.targetSize.pixels ?? 2000
                     customLongEdge = String(current)
                     store.settings.targetSize = .longEdge(current)
-                    customFieldFocused = true
+                    focusedField = .longEdge
                 }
             }
         )

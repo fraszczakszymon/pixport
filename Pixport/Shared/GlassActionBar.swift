@@ -22,6 +22,11 @@ struct GlassActionBar<Summary: View, Action: View>: View {
         case opaque
     }
 
+    /// Wysokość bezpiecznego obszaru zależy od orientacji, a przesunięcie pasa w dół
+    /// było dobrane pod pion. W poziomie margines wskaźnika ekranu głównego jest o ponad
+    /// połowę niższy, więc to samo przesunięcie wsadziłoby kapsuły na sam wskaźnik.
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+
     var backdrop: Backdrop = .floating
     @ViewBuilder var summary: () -> Summary
     @ViewBuilder var action: () -> Action
@@ -53,7 +58,7 @@ struct GlassActionBar<Summary: View, Action: View>: View {
         // Oddech nad kapsułami. Bez niego zawartość kończyła się dokładnie na ich
         // krawędzi i pas wyglądał na doklejony do siatki, zamiast nad nią leżeć.
         .padding(.top, GlassBar.topMargin)
-        .padding(.bottom, GlassBar.bottomMargin)
+        .padding(.bottom, GlassBar.bottomMargin(compactHeight: verticalSizeClass == .compact))
         .background {
             if backdrop == .opaque {
                 Rectangle()
@@ -81,16 +86,22 @@ enum GlassBar {
     static let topMargin: CGFloat = 12
     /// Przesunięcie w dół względem granicy bezpiecznego obszaru — wartość UJEMNA.
     ///
-    /// Granica bezpiecznego obszaru leży ok. 34 pt nad dolną krawędzią ekranu, więc pas
-    /// oparty dokładnie na niej wyglądał na zawieszony wysoko: odstęp od dołu wychodził
-    /// ponad trzy razy większy niż 16 pt od boków. Systemowe paski pływające w iOS 26
-    /// wchodzą w ten margines i tak samo robimy tutaj, zostawiając wskaźnik ekranu
-    /// głównego odsłonięty.
-    static let bottomMargin: CGFloat = -16
+    /// Granica bezpiecznego obszaru leży w pionie ok. 34 pt nad dolną krawędzią ekranu,
+    /// więc pas oparty dokładnie na niej wyglądał na zawieszony wysoko: odstęp od dołu
+    /// wychodził ponad trzy razy większy niż od boków. Systemowe paski pływające w iOS 26
+    /// wchodzą w ten margines i tak samo robimy tutaj.
+    ///
+    /// W poziomie ten sam margines ma ok. 21 pt, więc przesunięcie o 16 zostawiłoby
+    /// kapsuły 5 pt nad krawędzią — na samym wskaźniku ekranu głównego.
+    static func bottomMargin(compactHeight: Bool) -> CGFloat {
+        compactHeight ? -4 : -16
+    }
     static let sideMargin: CGFloat = 24
 
     /// Miejsce rezerwowane u dołu ekranu, niezależnie od tego, czy kapsuły są widoczne.
-    static var height: CGFloat { topMargin + contentHeight + bottomMargin }
+    static func height(compactHeight: Bool) -> CGFloat {
+        topMargin + contentHeight + bottomMargin(compactHeight: compactHeight)
+    }
 }
 
 /// Etykieta akcji: tekst ze strzałką, wspólna dla „Dalej" i „Przetwórz".
@@ -103,5 +114,9 @@ struct GlassActionLabel: View {
             Image(systemName: "arrow.right")
         }
         .font(.headline)
+        // Przy powiększonych krojach pisma etykieta potrafi rozepchnąć przycisk tak,
+        // że kapsuła podsumowania wychodzi poza ekran. Wolimy mniejszy napis.
+        .lineLimit(1)
+        .minimumScaleFactor(0.75)
     }
 }
