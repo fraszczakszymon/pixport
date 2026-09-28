@@ -68,7 +68,11 @@ struct LibraryView: View {
     private var grid: some View {
         GeometryReader { proxy in
             let columns = 4
-            let side = (proxy.size.width - spacing * CGFloat(columns - 1)) / CGFloat(columns)
+            // Przerw jest `columns + 1`, nie `columns - 1`: trzy między kafelkami
+            // i dwie przy krawędziach ekranu. `side` służy tylko do zamówienia miniatury
+            // we właściwym rozmiarze, ale rozjazd oznaczałby żądanie innego rozmiaru,
+            // niż komórka faktycznie ma — i miniatury skalowane przez system.
+            let side = (proxy.size.width - spacing * CGFloat(columns + 1)) / CGFloat(columns)
 
             ScrollView {
                 LazyVGrid(
@@ -94,6 +98,9 @@ struct LibraryView: View {
                         )
                     }
                 }
+                // Siatka nie dotyka krawędzi ekranu — z zaokrąglonymi rogami kafelek
+                // wchodzący w samą krawędź wygląda na przycięty, a nie na zaokrąglony.
+                .padding(spacing)
             }
             // Widok otwiera się na dole, przy najnowszych zdjęciach, i trzyma się tej
             // krawędzi, gdy zmieni się wysokość zawartości — na przykład gdy przybędzie

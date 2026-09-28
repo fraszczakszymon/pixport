@@ -11,7 +11,7 @@ struct ThumbnailView: View {
     /// przy dwupunktowej przerwie między kafelkami czyta się jako miękkość, a nie kształt.
     /// Przyciemnienie zaznaczonego kafelka musi używać tego samego promienia, inaczej
     /// w rogach wystaje prostokątny cień.
-    static let cornerRadius: CGFloat = 6
+    static let cornerRadius: CGFloat = 4
 
     static var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
