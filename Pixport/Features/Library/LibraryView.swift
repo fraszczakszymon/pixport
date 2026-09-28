@@ -171,68 +171,43 @@ private struct PhotoCell: View {
     }
 }
 
-/// Pływający pasek zaznaczenia u dołu.
+/// Pas zaznaczenia u dołu galerii.
 ///
-/// Dwie osobne kapsuły w stylu iOS 26, nie jeden pasek przez całą szerokość: po lewej
-/// podsumowanie, po prawej przejście dalej. Zawartość przewija się pod nimi, bo
-/// `glassEffect` jest półprzezroczysty — stąd warto, żeby było co pokazać.
-///
-/// **Wysokość jest stała**, także przy pustym zaznaczeniu. Dzięki temu obszar przewijania
-/// nigdy nie drgnie — a to był powód, dla którego dolny rząd zdjęć potrafił zniknąć pod
-/// przyciskiem dokładnie w chwili, gdy użytkownik go tapnął.
+/// Przy pustym zaznaczeniu kapsuł nie ma, ale zarezerwowana wysokość zostaje —
+/// to ona, a nie widoczność kapsuł, chroni dolny rząd zdjęć przed zasłonięciem.
 ///
 /// Kapsuły miały kiedyś zwijać się podczas przewijania do samej liczby i samej strzałki,
-/// jak w systemowych Zdjęciach. Wycofane: na prawdziwej rolce ruch okazał się nerwowy,
-/// bo faza przewijania zmienia się przy każdym najlżejszym przesunięciu palcem.
+/// jak w systemowych Zdjęciach. Wycofane po sprawdzeniu na telefonie: faza przewijania
+/// zmienia się przy każdym najlżejszym przesunięciu palcem, więc kapsuły pulsowały
+/// zamiast spokojnie reagować.
 private struct SelectionBar: View {
     @Environment(PhotoLibraryModel.self) private var library
-
-    static let height: CGFloat = 72
 
     private var count: Int { library.selection.count }
 
     var body: some View {
-        GlassEffectContainer(spacing: 16) {
-            HStack(spacing: 12) {
-                if count > 0 {
-                    summary
-                    Spacer(minLength: 0)
-                    next
+        Group {
+            if count > 0 {
+                GlassActionBar {
+                    Text(
+                        L.f(
+                            "library.selection.summary",
+                            count,
+                            ByteFormatting.string(library.selectionByteCount)
+                        )
+                    )
+                } action: {
+                    NavigationLink {
+                        SettingsView(photos: library.selectedPhotos())
+                    } label: {
+                        GlassActionLabel(title: L.s("library.next"))
+                    }
                 }
+            } else {
+                Color.clear.frame(height: GlassBar.height)
             }
-            .padding(.horizontal, 16)
         }
-        .frame(height: Self.height)
         .animation(.snappy(duration: 0.25), value: count)
-    }
-
-    private var summary: some View {
-        Text(
-            L.f(
-                "library.selection.summary",
-                count,
-                ByteFormatting.string(library.selectionByteCount)
-            )
-        )
-        .font(.subheadline.weight(.medium))
-        .monospacedDigit()
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
-        .glassEffect(.regular, in: .capsule)
-    }
-
-    private var next: some View {
-        NavigationLink {
-            SettingsView(photos: library.selectedPhotos())
-        } label: {
-            HStack(spacing: 6) {
-                Text(L.s("library.next"))
-                Image(systemName: "arrow.right")
-            }
-            .font(.headline)
-        }
-        .buttonStyle(.glassProminent)
-        .controlSize(.large)
     }
 }
 

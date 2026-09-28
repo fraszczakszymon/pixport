@@ -1379,19 +1379,19 @@
         }
       }
     },
-    "settings.estimate.rough": {
+    "settings.estimate.roughFooter": {
       "extractionState": "manual",
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "szacunek zgrubny"
+            "value": "Zdjęcia są przechowywane w iCloud, więc nie ma czego zmierzyć — podany rozmiar pochodzi z modelu i jest wyjątkowo zgrubny. Sam wynik będzie dokładny."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "rough estimate"
+            "value": "The photos live in iCloud, so there is nothing to measure — the size shown comes from a model and is especially rough. The result itself will be exact."
           }
         }
       }

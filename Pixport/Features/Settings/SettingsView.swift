@@ -120,8 +120,18 @@ struct SettingsView: View {
         } header: {
             Text(L.s("settings.section.size"))
         } footer: {
-            Text(settings.budget.isEnabled ? L.s("settings.budget.footer") : L.s("settings.srgb.footer"))
+            Text(sizeFooter)
         }
+    }
+
+    /// Stopka sekcji „Rozmiar" z jawnym pierwszeństwem komunikatów.
+    ///
+    /// Przy włączonym limicie nie ma sensu tłumaczyć, że szacunek jest zgrubny — tryb
+    /// budżetowy w ogóle się na nim nie opiera, tylko mierzy wynik naprawdę.
+    private var sizeFooter: String {
+        if settings.budget.isEnabled { return L.s("settings.budget.footer") }
+        if estimate.estimate?.isMeasured == false { return L.s("settings.estimate.roughFooter") }
+        return L.s("settings.srgb.footer")
     }
 
     private var metadataSection: some View {
@@ -184,54 +194,34 @@ struct SettingsView: View {
     // MARK: - Pasek akcji
 
     private var actionBar: some View {
-        VStack(spacing: 10) {
-            HStack {
-                Text(L.f("settings.summary.count", photos.count))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                estimateLabel
-            }
-
+        GlassActionBar {
+            Text(summaryText)
+        } action: {
             Button {
                 request = JobRequest(photos: photos, settings: settings)
             } label: {
-                Text(L.s("settings.process"))
-                    .frame(maxWidth: .infinity)
+                GlassActionLabel(title: L.s("settings.process"))
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
             .disabled(photos.isEmpty)
         }
-        .padding()
-        .background(.bar)
     }
 
-    @ViewBuilder
-    private var estimateLabel: some View {
+    /// „47 zdjęć · ~14 MB", a w trakcie liczenia „47 zdjęć · liczę…".
+    ///
+    /// Tylda jest celowa: rozmiar JPEG zależy od treści zdjęcia, więc przy mieszanym
+    /// zaznaczeniu potrafi się rozjechać. Informacja, że szacunek jest wyjątkowo zgrubny
+    /// (bo nie było czego zmierzyć), trafia do stopki sekcji „Rozmiar" — czyli tam, gdzie
+    /// stoją ustawienia, z których ta liczba wynika. W kapsule nie zmieściłaby się bez
+    /// wypchnięcia przycisku poza ekran.
+    private var summaryText: String {
+        let count = L.f("settings.summary.count", photos.count)
         if estimate.isEstimating {
-            HStack(spacing: 6) {
-                ProgressView().controlSize(.mini)
-                Text(L.s("settings.estimate.working"))
-            }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-        } else if let value = estimate.estimate {
-            VStack(alignment: .trailing, spacing: 1) {
-                // Tylda jest tu celowa: rozmiar JPEG zależy od treści zdjęcia,
-                // więc przy mieszanym zaznaczeniu potrafi się rozjechać.
-                Text(L.f("settings.estimate.value", ByteFormatting.string(value.bytes)))
-                    .font(.subheadline.weight(.semibold))
-                // Gdy zdjęcia siedzą w iCloud, nie mamy czego zmierzyć i liczba pochodzi
-                // z modelu. Użytkownik ma prawo wiedzieć, że to grubsze przybliżenie
-                // niż zwykle — zamiast domyślać się, czemu liczba nie trzyma się wyniku.
-                if !value.isMeasured {
-                    Text(L.s("settings.estimate.rough"))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-            }
+            return "\(count) · \(L.s("settings.estimate.working"))"
         }
+        if let value = estimate.estimate {
+            return "\(count) · \(L.f("settings.estimate.value", ByteFormatting.string(value.bytes)))"
+        }
+        return count
     }
 
     // MARK: - Pomocnicze

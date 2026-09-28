@@ -72,8 +72,10 @@ wg daty zrobienia (§8).
 nie jest on wygodą, tylko pułapką: jedno tapnięcie wybiera kilkanaście gigabajtów,
 a cofnięcie pomyłki wymaga drugiego.
 
-**Pasek zaznaczenia** to dwie pływające kapsuły w stylu iOS 26, a nie jeden pas przez całą
+**Pas akcji** to dwie pływające kapsuły w stylu iOS 26, a nie jeden pas przez całą
 szerokość: po lewej podsumowanie („47 zdjęć · 182 MB"), po prawej przejście dalej.
+Ten sam komponent obsługuje galerię i ekran ustawień — oba kroki mają wyglądać jak jedna
+aplikacja, a nie jak dwie.
 Zawartość przewija się pod nimi, bo szkło jest półprzezroczyste.
 
 **Wysokość pasa jest stała** — także przy pustym zaznaczeniu, gdy kapsuł po prostu nie ma.
@@ -253,7 +255,10 @@ rozmiarze plików źródłowych, który mieszałby ze sobą HEIC, JPEG, PNG i RA
 **Gdy nie ma czego zmierzyć.** Przy włączonej optymalizacji pamięci oryginały starszych
 zdjęć siedzą w iCloud. Świadomie nie ciągniemy ich po sieci tylko po to, żeby narysować
 tyldę — zamiast tego liczba pochodzi wtedy z prostego modelu „bajtów na piksel"
-(zależnego od formatu i jakości), a pod nią pojawia się podpis **„szacunek zgrubny"**.
+(zależnego od formatu i jakości), a wyjaśnienie trafia do **stopki sekcji „Rozmiar"** —
+czyli tam, gdzie stoją ustawienia, z których ta liczba wynika. W kapsule podsumowania
+nie zmieściłoby się bez wypchnięcia przycisku poza ekran. Przy włączonym limicie stopka
+ustępuje miejsca komunikatowi o limicie: tryb budżetowy w ogóle nie opiera się na szacunku.
 Wcześniej etykieta w tej sytuacji znikała bez słowa, przez co nie dało się odróżnić
 „nie wiem" od „zepsute" — i tak właśnie objawiało się to na telefonie, gdzie świeże
 zdjęcia (lokalne) pokazywały rozmiar, a starsze (w chmurze) nie.
