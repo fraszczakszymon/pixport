@@ -32,7 +32,7 @@ Interfejs po polsku i angielsku. Bundle ID: `pl.froncek.pixport`.
 ```
 1. Galeria          siatka biblioteki, zaznaczanie wielokrotne
                     najnowsze na dole, widok otwiera się przy dolnej krawędzi
-                    pasek u dołu: „47 zdjęć · 182 MB"                      [Dalej]
+                    kapsuły u dołu: „47 zdjęć · 182 MB"                      [Dalej]
 2. Ustawienia       wszystkie opcje naraz, wartości z ostatniego użycia
                     szacunek „~14 MB"                                  [Przetwórz]
 3. Postęp           „12 z 47", nazwa bieżącego pliku                      [Anuluj]
@@ -66,10 +66,17 @@ wg daty zrobienia (§8).
 nie jest on wygodą, tylko pułapką: jedno tapnięcie wybiera kilkanaście gigabajtów,
 a cofnięcie pomyłki wymaga drugiego.
 
-**Pasek u dołu jest widoczny zawsze**, także przy pustym zaznaczeniu (wtedy z nieaktywnym
-przyciskiem). Pokazywanie go dopiero po zaznaczeniu wyglądało zwinniej, ale zmieniało
-wysokość obszaru przewijania w najgorszym momencie: tuż po tapnięciu zdjęcia z dolnego
-rzędu pasek wyrastał dokładnie nad nim i zasłaniał resztę tego rzędu.
+**Pasek zaznaczenia** to dwie pływające kapsuły w stylu iOS 26, a nie jeden pas przez całą
+szerokość: po lewej podsumowanie („47 zdjęć · 182 MB"), po prawej przejście dalej.
+Zawartość przewija się pod nimi, bo szkło jest półprzezroczyste. **Podczas przewijania
+kapsuły zwijają się** do samej liczby i samej strzałki i rozwijają po zatrzymaniu — tak
+samo jak elementy w systemowych Zdjęciach.
+
+**Wysokość pasa jest stała** — także przy pustym zaznaczeniu (wtedy kapsuł po prostu nie
+ma) i przy zwinięciu. Kapsuły zmieniają rozmiar wewnątrz zarezerwowanego miejsca, więc
+obszar przewijania nigdy nie drgnie. To nie jest kosmetyka: przy pasku pojawiającym się
+razem z zaznaczeniem wysokość zmieniała się dokładnie w chwili tapnięcia zdjęcia
+z dolnego rzędu — i przycisk zasłaniał resztę tego rzędu.
 
 **Zdjęcia w iCloud.** Przy włączonej optymalizacji pamięci oryginały nie leżą na
 urządzeniu. Pixport je **pobiera** (`isNetworkAccessAllowed = true`) i to jest **jedyne

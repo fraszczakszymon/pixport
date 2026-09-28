@@ -2,6 +2,11 @@ import Foundation
 
 /// Stałe konfiguracyjne współdzielone przez aplikację i rozszerzenie.
 public enum PixportConfig {
+    /// Nazwa własna aplikacji. Nie przechodzi przez katalog tłumaczeń — marka brzmi
+    /// tak samo w każdym języku, a album o przetłumaczonej nazwie rozpadłby się na dwa
+    /// przy zmianie języka systemu.
+    public static let appName = "Pixport"
+
     public static let appGroupID = "group.pl.froncek.pixport"
     public static let urlScheme = "pixport"
 

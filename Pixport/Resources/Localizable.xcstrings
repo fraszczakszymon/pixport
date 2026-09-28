@@ -869,23 +869,6 @@
         }
       }
     },
-    "library.selection.empty": {
-      "extractionState": "manual",
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wybierz zdjęcia do przetworzenia"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose photos to process"
-          }
-        }
-      }
-    },
     "library.selection.summary": {
       "extractionState": "manual",
       "localizations": {
@@ -899,23 +882,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%d photos · %@"
-          }
-        }
-      }
-    },
-    "library.title": {
-      "extractionState": "manual",
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zdjęcia"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Photos"
           }
         }
       }

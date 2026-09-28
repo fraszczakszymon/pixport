@@ -10,10 +10,8 @@ import Photos
 /// dostęp do tego, co wyprodukowała aplikacja — ale nie chowa zdjęć przed rolką.
 enum PhotoSaver {
 
-    /// Nazwa albumu nie jest tłumaczona: to nazwa własna aplikacji, a album raz założony
-    /// zostaje w bibliotece na stałe. Przetłumaczenie jej oznaczałoby, że zmiana języka
-    /// systemu tworzy drugi album i rozbija zbiór na dwa.
-    static let albumTitle = "Pixport"
+    /// Album nosi nazwę aplikacji. Raz założony zostaje w bibliotece na stałe.
+    static let albumTitle = PixportConfig.appName
 
     enum Outcome: Sendable {
         case savedToAlbum(count: Int)

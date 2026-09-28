@@ -10,6 +10,8 @@ import SwiftUI
 struct LibraryView: View {
     @Environment(PhotoLibraryModel.self) private var library
     @State private var showsAppSettings = false
+    /// Podczas przewijania pasek zwija się do samej liczby i ikony — tak jak w Zdjęciach.
+    @State private var isScrolling = false
 
     private let spacing: CGFloat = 2
 
@@ -27,7 +29,7 @@ struct LibraryView: View {
                     content
                 }
             }
-            .navigationTitle(L.s("library.title"))
+            .navigationTitle(PixportConfig.appName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
             .sheet(isPresented: $showsAppSettings) {
@@ -40,7 +42,7 @@ struct LibraryView: View {
             // i zasłaniał resztę tego rzędu. Stała wysokość znaczy zero przeskoków.
             .safeAreaInset(edge: .bottom) {
                 if library.access == .authorized || library.access == .limited {
-                    SelectionBar()
+                    SelectionBar(isCompact: isScrolling)
                 }
             }
         }
@@ -95,6 +97,9 @@ struct LibraryView: View {
             // i reakcja na zmianę wysokości — tak; wyrównanie krótkiej zawartości — nie.
             .defaultScrollAnchor(.bottom, for: .initialOffset)
             .defaultScrollAnchor(.bottom, for: .sizeChanges)
+            .onScrollPhaseChange { _, phase in
+                isScrolling = phase.isScrolling
+            }
         }
     }
 
@@ -155,41 +160,81 @@ private struct PhotoCell: View {
     }
 }
 
-/// Pasek u dołu z podsumowaniem zaznaczenia.
+/// Pływający pasek zaznaczenia u dołu.
 ///
-/// Oba stany mają identyczny układ i wysokość — linia tekstu plus przycisk — żeby
-/// pojawienie się zaznaczenia nie przesuwało zawartości pod palcem.
+/// Dwie osobne kapsuły w stylu iOS 26, nie jeden pasek przez całą szerokość: po lewej
+/// podsumowanie, po prawej przejście dalej. Zawartość przewija się pod nimi, bo
+/// `glassEffect` jest półprzezroczysty — stąd warto, żeby było co pokazać.
+///
+/// **Wysokość jest stała**, także przy pustym zaznaczeniu i przy zwinięciu. Kapsuły
+/// zmieniają rozmiar w środku zarezerwowanego pasa, więc obszar przewijania nigdy nie
+/// drgnie — a to był powód, dla którego dolny rząd zdjęć potrafił zniknąć pod przyciskiem
+/// dokładnie w chwili, gdy użytkownik go tapnął.
 private struct SelectionBar: View {
     @Environment(PhotoLibraryModel.self) private var library
 
-    private var isEmpty: Bool { library.selection.isEmpty }
+    /// Przewijanie zwija kapsuły do samej liczby i samej ikony.
+    let isCompact: Bool
+
+    @Namespace private var glass
+
+    static let height: CGFloat = 72
+
+    private var count: Int { library.selection.count }
 
     var body: some View {
-        VStack(spacing: 10) {
-            Text(
-                isEmpty
-                    ? L.s("library.selection.empty")
-                    : L.f(
-                        "library.selection.summary",
-                        library.selection.count,
-                        ByteFormatting.string(library.selectionByteCount)
-                    )
-            )
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-
-            NavigationLink {
-                SettingsView(photos: library.selectedPhotos())
-            } label: {
-                Text(L.s("library.next"))
-                    .frame(maxWidth: .infinity)
+        GlassEffectContainer(spacing: 16) {
+            HStack(spacing: 12) {
+                if count > 0 {
+                    summary
+                    Spacer(minLength: 0)
+                    next
+                }
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .disabled(isEmpty)
+            .padding(.horizontal, 16)
         }
-        .padding()
-        .background(.bar)
+        .frame(height: Self.height)
+        .animation(.snappy(duration: 0.25), value: isCompact)
+        .animation(.snappy(duration: 0.25), value: count)
+    }
+
+    private var summary: some View {
+        Text(
+            isCompact
+                ? "\(count)"
+                : L.f(
+                    "library.selection.summary",
+                    count,
+                    ByteFormatting.string(library.selectionByteCount)
+                )
+        )
+        .font(.subheadline.weight(.medium))
+        .monospacedDigit()
+        .padding(.horizontal, isCompact ? 16 : 20)
+        .padding(.vertical, isCompact ? 10 : 14)
+        .glassEffect(.regular, in: .capsule)
+        .glassEffectID("summary", in: glass)
+    }
+
+    private var next: some View {
+        NavigationLink {
+            SettingsView(photos: library.selectedPhotos())
+        } label: {
+            if isCompact {
+                Image(systemName: "arrow.right")
+                    .font(.headline)
+            } else {
+                HStack(spacing: 6) {
+                    Text(L.s("library.next"))
+                    Image(systemName: "arrow.right")
+                }
+                .font(.headline)
+            }
+        }
+        .buttonStyle(.glassProminent)
+        .controlSize(isCompact ? .regular : .large)
+        .glassEffectID("next", in: glass)
+        .accessibilityLabel(L.s("library.next"))
     }
 }
 
