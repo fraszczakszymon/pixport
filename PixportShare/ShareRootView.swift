@@ -110,7 +110,7 @@ struct ShareRootView: View {
                 Button {
                     Task { await run() }
                 } label: {
-                    Text(L.f("share.process", photos.count))
+                    Text(L.f("share.process", L.photos(photos.count)))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)

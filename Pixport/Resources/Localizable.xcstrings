@@ -193,15 +193,51 @@
       "extractionState": "manual",
       "localizations": {
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d porcji"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d porcja"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d porcje"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d porcji"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d porcje"
+                }
+              }
+            }
           }
         },
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d batches"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d batch"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d batches"
+                }
+              }
+            }
           }
         }
       }
@@ -342,6 +378,59 @@
         }
       }
     },
+    "common.photoCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d zdjęcie"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d zdjęcia"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d zdjęć"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d zdjęcia"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d photo"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d photos"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "error.budget.message": {
       "extractionState": "manual",
       "localizations": {
@@ -465,15 +554,51 @@
       "extractionState": "manual",
       "localizations": {
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d zdjęć jest przechowywanych w iCloud i trzeba je najpierw pobrać. Połącz się z internetem i spróbuj ponownie."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d zdjęcie jest przechowywane w iCloud i trzeba je najpierw pobrać. Połącz się z internetem i spróbuj ponownie."
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d zdjęcia są przechowywane w iCloud i trzeba je najpierw pobrać. Połącz się z internetem i spróbuj ponownie."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d zdjęć jest przechowywanych w iCloud i trzeba je najpierw pobrać. Połącz się z internetem i spróbuj ponownie."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d zdjęcia są przechowywane w iCloud i trzeba je najpierw pobrać. Połącz się z internetem i spróbuj ponownie."
+                }
+              }
+            }
           }
         },
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d photos are stored in iCloud and need to be downloaded first. Connect to the internet and try again."
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d photo is stored in iCloud and needs to be downloaded first. Connect to the internet and try again."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d photos are stored in iCloud and need to be downloaded first. Connect to the internet and try again."
+                }
+              }
+            }
           }
         }
       }
@@ -875,13 +1000,13 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%d zdjęć · %@"
+            "value": "%@ · %@"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%d photos · %@"
+            "value": "%@ · %@"
           }
         }
       }
@@ -1079,13 +1204,66 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%d archiwów · %d zdjęć"
+            "value": "%@ · %@"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%d archives · %d photos"
+            "value": "%@ · %@"
+          }
+        }
+      }
+    },
+    "result.archiveCountOnly": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d archiwum"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d archiwa"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d archiwów"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d archiwa"
+                }
+              }
+            }
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d archive"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d archives"
+                }
+              }
+            }
           }
         }
       }
@@ -1128,15 +1306,51 @@
       "extractionState": "manual",
       "localizations": {
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d plików"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d plik"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d pliki"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d plików"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d pliki"
+                }
+              }
+            }
           }
         },
         "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d files"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d file"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%d files"
+                }
+              }
+            }
           }
         }
       }
@@ -1215,13 +1429,13 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zapisano %d zdjęć w bibliotece."
+            "value": "Zapisano %@ w bibliotece."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Saved %d photos to your library."
+            "value": "Saved %@ to your library."
           }
         }
       }
@@ -1232,13 +1446,13 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zapisano %d zdjęć w albumie „%@”. Znajdziesz je też w Ostatnich — iOS zawsze dodaje nowe zdjęcia do biblioteki."
+            "value": "Zapisano %@ w albumie „%@”. Znajdziesz je też w Ostatnich — iOS zawsze dodaje nowe zdjęcia do biblioteki."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Saved %d photos to the “%@” album. They also appear in Recents — iOS always adds new photos to the library."
+            "value": "Saved %@ to the “%@” album. They also appear in Recents — iOS always adds new photos to the library."
           }
         }
       }
@@ -1821,23 +2035,6 @@
         }
       }
     },
-    "settings.summary.count": {
-      "extractionState": "manual",
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d zdjęć"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%d photos"
-          }
-        }
-      }
-    },
     "settings.title": {
       "extractionState": "manual",
       "localizations": {
@@ -1963,13 +2160,13 @@
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Przetwórz %d zdjęć i udostępnij"
+            "value": "Przetwórz %@ i udostępnij"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Process %d photos and share"
+            "value": "Process %@ and share"
           }
         }
       }

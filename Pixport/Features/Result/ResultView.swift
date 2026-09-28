@@ -78,7 +78,11 @@ struct ResultView: View {
             Text(
                 result.archives.isEmpty
                     ? L.f("result.fileCount", result.files.count)
-                    : L.f("result.archiveCount", result.archives.count, result.files.count)
+                    : L.f(
+                        "result.archiveCount",
+                        L.f("result.archiveCountOnly", result.archives.count),
+                        L.photos(result.files.count)
+                    )
             )
             .font(.subheadline)
             .foregroundStyle(.secondary)
@@ -181,9 +185,9 @@ struct ResultView: View {
         do {
             switch try await PhotoSaver.save(result.files) {
             case .savedToAlbum(let count):
-                saveMessage = L.f("result.savePhotos.successAlbum", count, PhotoSaver.albumTitle)
+                saveMessage = L.f("result.savePhotos.successAlbum", L.photos(count), PhotoSaver.albumTitle)
             case .savedToLibrary(let count):
-                saveMessage = L.f("result.savePhotos.success", count)
+                saveMessage = L.f("result.savePhotos.success", L.photos(count))
             }
         } catch {
             saveMessage = error.localizedDescription

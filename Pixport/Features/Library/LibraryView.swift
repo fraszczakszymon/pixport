@@ -204,7 +204,7 @@ private struct SelectionBar: View {
                     Text(
                         L.f(
                             "library.selection.summary",
-                            count,
+                            L.photos(count),
                             ByteFormatting.string(library.selectionByteCount)
                         )
                     )

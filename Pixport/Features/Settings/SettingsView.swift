@@ -245,7 +245,7 @@ struct SettingsView: View {
     @ViewBuilder
     private var summaryContent: some View {
         HStack(spacing: 6) {
-            Text(L.f("settings.summary.count", photos.count))
+            Text(L.photos(photos.count))
 
             if let value = estimate.estimate {
                 Text(verbatim: "·")

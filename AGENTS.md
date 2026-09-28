@@ -22,6 +22,7 @@ xcodegen generate                              # regenerate Pixport.xcodeproj fr
 swift test --package-path Packages/PixportKit  # engine tests, run on macOS — no simulator needed
 swift Tools/make-icon.swift Pixport/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 swift Tools/make-icon.swift docs/icon.png --rounded --size 512   # README variant (has alpha)
+swift Tools/check-plurals.swift <path to Pixport.app>            # plural forms in a built bundle
 
 xcodebuild -project Pixport.xcodeproj -scheme Pixport \
   -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
@@ -80,6 +81,14 @@ PixportShare/                 share extension — its own self-contained SwiftUI
   prompt, and the prompt fires exactly once in the app's lifetime.
 - **Explicit localisation keys** (`library.title`) via `L.s(_:)` / `L.f(_:_:)`, not
   Polish sentences used as keys.
+- **A counted noun needs plural variations**, and Polish has four categories, not two
+  (1 / 2–4 / 5+ / rest — and 12 is "many" while 22 is "few"). Reuse `L.photos(_:)` and
+  compose it into an invariant carrier ("Zapisano %@ w bibliotece"); give the whole
+  string its own variations only when the verb agrees too, as in `error.offline.message`.
+  `L.f` passes `locale:` for exactly this reason — without it `String(format:)` does not
+  expand the `%#@…@` substitutions a String Catalog compiles plurals into, and the raw
+  token reaches the screen. `Tools/check-plurals.swift` verifies this against a built
+  bundle; nothing else catches it.
 - **Polish UI wording is part of the product.** Never write "bez utraty jakości"
   (lossless) about downscaling, and never call ZIP "kompresja" — it compresses JPEGs by
   roughly nothing.
