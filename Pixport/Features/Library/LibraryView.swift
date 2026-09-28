@@ -10,8 +10,6 @@ import SwiftUI
 struct LibraryView: View {
     @Environment(PhotoLibraryModel.self) private var library
     @State private var showsAppSettings = false
-    /// Podczas przewijania pasek zwija się do samej liczby i ikony — tak jak w Zdjęciach.
-    @State private var isScrolling = false
 
     private let spacing: CGFloat = 2
 
@@ -42,7 +40,7 @@ struct LibraryView: View {
             // i zasłaniał resztę tego rzędu. Stała wysokość znaczy zero przeskoków.
             .safeAreaInset(edge: .bottom) {
                 if library.access == .authorized || library.access == .limited {
-                    SelectionBar(isCompact: isScrolling)
+                    SelectionBar()
                 }
             }
         }
@@ -77,6 +75,16 @@ struct LibraryView: View {
                     columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: columns),
                     spacing: spacing
                 ) {
+                    // Puste komórki na początku, żeby DOLNY rząd był zawsze pełny.
+                    //
+                    // Siatka wypełnia się od góry, więc przy 4 kolumnach i liczbie zdjęć
+                    // niepodzielnej przez 4 niepełny rząd wypadał na końcu — czyli tam,
+                    // gdzie są najnowsze zdjęcia i gdzie widok się otwiera. Wyglądało to
+                    // jak urwana rolka. Poszarzały brzeg należy się drugiemu końcowi:
+                    // najstarszym zdjęciom, do których i tak trzeba przewijać.
+                    ForEach(0..<leadingGaps(count: library.visibleAssets.count, columns: columns), id: \.self) { _ in
+                        Color.clear.aspectRatio(1, contentMode: .fit)
+                    }
                     ForEach(library.visibleAssets, id: \.localIdentifier) { asset in
                         PhotoCell(
                             asset: asset,
@@ -97,10 +105,13 @@ struct LibraryView: View {
             // i reakcja na zmianę wysokości — tak; wyrównanie krótkiej zawartości — nie.
             .defaultScrollAnchor(.bottom, for: .initialOffset)
             .defaultScrollAnchor(.bottom, for: .sizeChanges)
-            .onScrollPhaseChange { _, phase in
-                isScrolling = phase.isScrolling
-            }
         }
+    }
+
+    /// Ile pustych komórek dołożyć na początku, żeby ostatni rząd wyszedł pełny.
+    private func leadingGaps(count: Int, columns: Int) -> Int {
+        let remainder = count % columns
+        return remainder == 0 ? 0 : columns - remainder
     }
 
     @ToolbarContentBuilder
@@ -166,17 +177,15 @@ private struct PhotoCell: View {
 /// podsumowanie, po prawej przejście dalej. Zawartość przewija się pod nimi, bo
 /// `glassEffect` jest półprzezroczysty — stąd warto, żeby było co pokazać.
 ///
-/// **Wysokość jest stała**, także przy pustym zaznaczeniu i przy zwinięciu. Kapsuły
-/// zmieniają rozmiar w środku zarezerwowanego pasa, więc obszar przewijania nigdy nie
-/// drgnie — a to był powód, dla którego dolny rząd zdjęć potrafił zniknąć pod przyciskiem
-/// dokładnie w chwili, gdy użytkownik go tapnął.
+/// **Wysokość jest stała**, także przy pustym zaznaczeniu. Dzięki temu obszar przewijania
+/// nigdy nie drgnie — a to był powód, dla którego dolny rząd zdjęć potrafił zniknąć pod
+/// przyciskiem dokładnie w chwili, gdy użytkownik go tapnął.
+///
+/// Kapsuły miały kiedyś zwijać się podczas przewijania do samej liczby i samej strzałki,
+/// jak w systemowych Zdjęciach. Wycofane: na prawdziwej rolce ruch okazał się nerwowy,
+/// bo faza przewijania zmienia się przy każdym najlżejszym przesunięciu palcem.
 private struct SelectionBar: View {
     @Environment(PhotoLibraryModel.self) private var library
-
-    /// Przewijanie zwija kapsuły do samej liczby i samej ikony.
-    let isCompact: Bool
-
-    @Namespace private var glass
 
     static let height: CGFloat = 72
 
@@ -194,47 +203,36 @@ private struct SelectionBar: View {
             .padding(.horizontal, 16)
         }
         .frame(height: Self.height)
-        .animation(.snappy(duration: 0.25), value: isCompact)
         .animation(.snappy(duration: 0.25), value: count)
     }
 
     private var summary: some View {
         Text(
-            isCompact
-                ? "\(count)"
-                : L.f(
-                    "library.selection.summary",
-                    count,
-                    ByteFormatting.string(library.selectionByteCount)
-                )
+            L.f(
+                "library.selection.summary",
+                count,
+                ByteFormatting.string(library.selectionByteCount)
+            )
         )
         .font(.subheadline.weight(.medium))
         .monospacedDigit()
-        .padding(.horizontal, isCompact ? 16 : 20)
-        .padding(.vertical, isCompact ? 10 : 14)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 14)
         .glassEffect(.regular, in: .capsule)
-        .glassEffectID("summary", in: glass)
     }
 
     private var next: some View {
         NavigationLink {
             SettingsView(photos: library.selectedPhotos())
         } label: {
-            if isCompact {
+            HStack(spacing: 6) {
+                Text(L.s("library.next"))
                 Image(systemName: "arrow.right")
-                    .font(.headline)
-            } else {
-                HStack(spacing: 6) {
-                    Text(L.s("library.next"))
-                    Image(systemName: "arrow.right")
-                }
-                .font(.headline)
             }
+            .font(.headline)
         }
         .buttonStyle(.glassProminent)
-        .controlSize(isCompact ? .regular : .large)
-        .glassEffectID("next", in: glass)
-        .accessibilityLabel(L.s("library.next"))
+        .controlSize(.large)
     }
 }
 

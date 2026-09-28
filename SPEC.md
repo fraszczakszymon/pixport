@@ -55,7 +55,13 @@ przy pierwszym uruchomieniu (§11).
 
 **Kolejność i podgląd.** Siatka jest ułożona jak w systemowych Zdjęciach: najstarsze na
 górze, najnowsze na dole, a widok otwiera się przy dolnej krawędzi i trzyma się jej przy
-zmianie wysokości zawartości. **Przytrzymanie kafelka** pokazuje powiększony podgląd
+zmianie wysokości zawartości.
+
+**Niepełny rząd wypada na górze, nie na dole.** Siatka wypełnia się od góry, więc przy
+liczbie zdjęć niepodzielnej przez cztery ostatni rząd bywał kikutem z jednym zdjęciem —
+dokładnie tam, gdzie widok się otwiera i gdzie są najnowsze zdjęcia. Wyglądało to jak
+urwana rolka. Dokładamy więc puste komórki na **początku**, żeby dolny rząd był zawsze
+pełny; poszarpany brzeg należy się drugiemu końcowi, do którego i tak trzeba przewijać. **Przytrzymanie kafelka** pokazuje powiększony podgląd
 z jedną pozycją menu (zaznacz / odznacz) — przy kafelku wielkości kciuka nie da się
 inaczej rozpoznać, które ujęcie jest ostre.
 
@@ -68,13 +74,15 @@ a cofnięcie pomyłki wymaga drugiego.
 
 **Pasek zaznaczenia** to dwie pływające kapsuły w stylu iOS 26, a nie jeden pas przez całą
 szerokość: po lewej podsumowanie („47 zdjęć · 182 MB"), po prawej przejście dalej.
-Zawartość przewija się pod nimi, bo szkło jest półprzezroczyste. **Podczas przewijania
-kapsuły zwijają się** do samej liczby i samej strzałki i rozwijają po zatrzymaniu — tak
-samo jak elementy w systemowych Zdjęciach.
+Zawartość przewija się pod nimi, bo szkło jest półprzezroczyste.
 
-**Wysokość pasa jest stała** — także przy pustym zaznaczeniu (wtedy kapsuł po prostu nie
-ma) i przy zwinięciu. Kapsuły zmieniają rozmiar wewnątrz zarezerwowanego miejsca, więc
-obszar przewijania nigdy nie drgnie. To nie jest kosmetyka: przy pasku pojawiającym się
+**Wysokość pasa jest stała** — także przy pustym zaznaczeniu, gdy kapsuł po prostu nie ma.
+Dzięki temu obszar przewijania nigdy nie drgnie.
+
+*Zwijanie kapsuł podczas przewijania* (do samej liczby i samej strzałki, jak w systemowych
+Zdjęciach) było zaimplementowane i zostało **wycofane po sprawdzeniu na telefonie**: faza
+przewijania zmienia się przy każdym najlżejszym przesunięciu palcem, więc kapsuły
+pulsowały zamiast spokojnie reagować. To nie jest kosmetyka: przy pasku pojawiającym się
 razem z zaznaczeniem wysokość zmieniała się dokładnie w chwili tapnięcia zdjęcia
 z dolnego rzędu — i przycisk zasłaniał resztę tego rzędu.
 
