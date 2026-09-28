@@ -7,6 +7,16 @@ import SwiftUI
 /// w jakim komórka jest rysowana. Proszenie o pełnowymiarowy obraz i skalowanie go
 /// w SwiftUI byłoby najprostszą drogą do siatki, która klatkuje i zjada pamięć.
 struct ThumbnailView: View {
+    /// Ledwie zaznaczone zaokrąglenie, jak w systemowych Zdjęciach — na tyle małe, że
+    /// przy dwupunktowej przerwie między kafelkami czyta się jako miękkość, a nie kształt.
+    /// Przyciemnienie zaznaczonego kafelka musi używać tego samego promienia, inaczej
+    /// w rogach wystaje prostokątny cień.
+    static let cornerRadius: CGFloat = 6
+
+    static var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    }
+
     let asset: PHAsset
     let side: CGFloat
 
@@ -27,7 +37,9 @@ struct ThumbnailView: View {
                         .scaledToFill()
                 }
             }
-            .clipped()
+            .clipShape(Self.shape)
+            // Cały kwadrat pozostaje klikalny — zaokrąglone rogi nie mają wypadać
+            // z obszaru trafienia.
             .contentShape(Rectangle())
         .task(id: asset.localIdentifier) {
             image = await ThumbnailLoader.shared.image(for: asset, side: side, scale: displayScale)

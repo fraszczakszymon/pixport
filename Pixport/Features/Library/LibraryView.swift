@@ -140,6 +140,15 @@ private struct PhotoCell: View {
 
     var body: some View {
         ThumbnailView(asset: asset, side: side)
+            // Zaznaczenie przyciemnia zdjęcie, zamiast obrysowywać je ramką. Ramka
+            // zjadała kilka procent kadru i przy gęstej siatce robiła z ekranu kratę;
+            // przyciemnienie czyta się od razu, a zdjęcie zostaje całe.
+            .overlay {
+                ThumbnailView.shape
+                    .fill(.black)
+                    .opacity(isSelected ? 0.34 : 0)
+            }
+            // Ptaszek NAD przyciemnieniem, inaczej zgasłby razem ze zdjęciem.
             .overlay(alignment: .bottomTrailing) {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
@@ -148,11 +157,7 @@ private struct PhotoCell: View {
                     .padding(5)
                     .shadow(radius: 2)
             }
-            .overlay {
-                if isSelected {
-                    Rectangle().strokeBorder(Color.accentColor, lineWidth: 3)
-                }
-            }
+            .animation(.easeInOut(duration: 0.15), value: isSelected)
             .onTapGesture(perform: onToggle)
             // Przytrzymanie daje powiększony podgląd, tak jak w systemowych Zdjęciach —
             // przy kafelku wielkości kciuka nie da się inaczej rozpoznać, które ujęcie

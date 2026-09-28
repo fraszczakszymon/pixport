@@ -57,6 +57,10 @@ przy pierwszym uruchomieniu (§11).
 górze, najnowsze na dole, a widok otwiera się przy dolnej krawędzi i trzyma się jej przy
 zmianie wysokości zawartości.
 
+**Zaznaczenie przyciemnia kafelek**, zamiast go obrysowywać: ledwie zaokrąglone rogi
+i czarna warstwa o krycia ok. 34%, plus ptaszek w rogu — tak jak w systemowych Zdjęciach.
+Kolorowa ramka zjadała kilka procent kadru i przy gęstej siatce robiła z ekranu kratę.
+
 **Niepełny rząd wypada na górze, nie na dole.** Siatka wypełnia się od góry, więc przy
 liczbie zdjęć niepodzielnej przez cztery ostatni rząd bywał kikutem z jednym zdjęciem —
 dokładnie tam, gdzie widok się otwiera i gdzie są najnowsze zdjęcia. Wyglądało to jak
