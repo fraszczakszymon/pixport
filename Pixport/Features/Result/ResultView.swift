@@ -179,8 +179,12 @@ struct ResultView: View {
         isSaving = true
         defer { isSaving = false }
         do {
-            try await PhotoSaver.save(result.files)
-            saveMessage = L.f("result.savePhotos.success", result.files.count)
+            switch try await PhotoSaver.save(result.files) {
+            case .savedToAlbum(let count):
+                saveMessage = L.f("result.savePhotos.successAlbum", count, PhotoSaver.albumTitle)
+            case .savedToLibrary(let count):
+                saveMessage = L.f("result.savePhotos.success", count)
+            }
         } catch {
             saveMessage = error.localizedDescription
         }

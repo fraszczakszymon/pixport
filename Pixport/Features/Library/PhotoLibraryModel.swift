@@ -92,7 +92,12 @@ final class PhotoLibraryModel: NSObject, PHPhotoLibraryChangeObserver {
         defer { isLoading = false }
 
         let options = PHFetchOptions()
-        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        // Rosnąco: najstarsze na górze, najnowsze na dole — tak jak w systemowych
+        // Zdjęciach. Widok startuje przy dolnej krawędzi, więc pierwsze, co widać, to
+        // zdjęcia zrobione przed chwilą, a nie sprzed pięciu lat.
+        // Kolejność wyświetlania nie ma wpływu na numerację plików: `FileNamer.ordered`
+        // i tak sortuje po dacie zrobienia.
+        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         // Wideo nie pojawia się w ogóle. Aplikacja konwertuje zdjęcia; pokazanie filmu,
         // którego nie umie przetworzyć, tylko rodziłoby pytanie „dlaczego się nie zmniejszył".
         options.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
@@ -119,10 +124,6 @@ final class PhotoLibraryModel: NSObject, PHPhotoLibraryChangeObserver {
         } else {
             selection.insert(asset.localIdentifier)
         }
-    }
-
-    func selectAllVisible() {
-        selection = Set(visibleAssets.map(\.localIdentifier))
     }
 
     func clearSelection() {

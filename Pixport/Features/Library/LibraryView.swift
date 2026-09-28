@@ -33,8 +33,13 @@ struct LibraryView: View {
             .sheet(isPresented: $showsAppSettings) {
                 AppSettingsView()
             }
+            // Pasek jest w układzie ZAWSZE, gdy mamy dostęp do biblioteki — także przy
+            // pustym zaznaczeniu. Pokazywanie go dopiero po zaznaczeniu wyglądało zwinniej,
+            // ale zmieniało wysokość obszaru przewijania w najgorszym możliwym momencie:
+            // tuż po tapnięciu zdjęcia z dolnego rzędu pasek wyrastał dokładnie nad nim
+            // i zasłaniał resztę tego rzędu. Stała wysokość znaczy zero przeskoków.
             .safeAreaInset(edge: .bottom) {
-                if !library.selection.isEmpty {
+                if library.access == .authorized || library.access == .limited {
                     SelectionBar()
                 }
             }
@@ -74,12 +79,16 @@ struct LibraryView: View {
                         PhotoCell(
                             asset: asset,
                             side: side,
-                            isSelected: library.selection.contains(asset.localIdentifier)
+                            isSelected: library.selection.contains(asset.localIdentifier),
+                            onToggle: { library.toggle(asset) }
                         )
-                        .onTapGesture { library.toggle(asset) }
                     }
                 }
             }
+            // Widok otwiera się na dole, przy najnowszych zdjęciach, i trzyma się tej
+            // krawędzi, gdy zmieni się wysokość zawartości — na przykład gdy biblioteka
+            // dokończy wczytywanie albo przybędzie nowe zdjęcie.
+            .defaultScrollAnchor(.bottom)
         }
     }
 
@@ -91,11 +100,10 @@ struct LibraryView: View {
             }
             .accessibilityLabel(L.s("library.appSettings"))
         }
+        // Bez "zaznacz wszystkie": przy rolce liczonej w tysiącach zdjęć ten przycisk
+        // nie jest wygodą, tylko pułapką — jedno tapnięcie wybiera kilkanaście gigabajtów.
         ToolbarItem(placement: .topBarTrailing) {
-            if library.selection.isEmpty {
-                Button(L.s("library.selectAll")) { library.selectAllVisible() }
-                    .disabled(library.visibleAssets.isEmpty)
-            } else {
+            if !library.selection.isEmpty {
                 Button(L.s("library.deselect")) { library.clearSelection() }
             }
         }
@@ -106,6 +114,7 @@ private struct PhotoCell: View {
     let asset: PHAsset
     let side: CGFloat
     let isSelected: Bool
+    let onToggle: () -> Void
 
     var body: some View {
         ThumbnailView(asset: asset, side: side)
@@ -122,21 +131,43 @@ private struct PhotoCell: View {
                     Rectangle().strokeBorder(Color.accentColor, lineWidth: 3)
                 }
             }
+            .onTapGesture(perform: onToggle)
+            // Przytrzymanie daje powiększony podgląd, tak jak w systemowych Zdjęciach —
+            // przy kafelku wielkości kciuka nie da się inaczej rozpoznać, które ujęcie
+            // jest tym ostrym. Pozycja w menu jest jedna, bo w tym miejscu istnieje
+            // dokładnie jedna sensowna czynność.
+            .contextMenu {
+                Button(action: onToggle) {
+                    Label(
+                        isSelected ? L.s("library.preview.deselect") : L.s("library.preview.select"),
+                        systemImage: isSelected ? "checkmark.circle" : "circle"
+                    )
+                }
+            } preview: {
+                PhotoPreview(asset: asset)
+            }
     }
 }
 
 /// Pasek u dołu z podsumowaniem zaznaczenia.
+///
+/// Oba stany mają identyczny układ i wysokość — linia tekstu plus przycisk — żeby
+/// pojawienie się zaznaczenia nie przesuwało zawartości pod palcem.
 private struct SelectionBar: View {
     @Environment(PhotoLibraryModel.self) private var library
+
+    private var isEmpty: Bool { library.selection.isEmpty }
 
     var body: some View {
         VStack(spacing: 10) {
             Text(
-                L.f(
-                    "library.selection.summary",
-                    library.selection.count,
-                    ByteFormatting.string(library.selectionByteCount)
-                )
+                isEmpty
+                    ? L.s("library.selection.empty")
+                    : L.f(
+                        "library.selection.summary",
+                        library.selection.count,
+                        ByteFormatting.string(library.selectionByteCount)
+                    )
             )
             .font(.subheadline)
             .foregroundStyle(.secondary)
@@ -149,6 +180,7 @@ private struct SelectionBar: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .disabled(isEmpty)
         }
         .padding()
         .background(.bar)

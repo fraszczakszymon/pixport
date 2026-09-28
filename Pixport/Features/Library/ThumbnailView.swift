@@ -44,11 +44,36 @@ actor ThumbnailLoader {
     /// `scale` przychodzi ze środowiska widoku, a nie z `UIScreen.main` — ten ostatni
     /// jest wycofany i w oknach na iPadzie potrafi zwrócić skalę innego ekranu.
     func image(for asset: PHAsset, side: CGFloat, scale: CGFloat) async -> UIImage? {
-        let size = CGSize(width: side * scale, height: side * scale)
+        await request(
+            asset,
+            targetSize: CGSize(width: side * scale, height: side * scale),
+            contentMode: .aspectFill,
+            resizeMode: .fast
+        )
+    }
 
+    /// Większy kadr na podgląd po przytrzymaniu.
+    ///
+    /// `aspectFit` zamiast `aspectFill`, bo podgląd pokazuje całe zdjęcie, a nie wycinek,
+    /// i `resizeMode` dokładny — przy tej wielkości rozmycie z trybu szybkiego byłoby widoczne.
+    func preview(for asset: PHAsset, maxSide: CGFloat, scale: CGFloat) async -> UIImage? {
+        await request(
+            asset,
+            targetSize: CGSize(width: maxSide * scale, height: maxSide * scale),
+            contentMode: .aspectFit,
+            resizeMode: .exact
+        )
+    }
+
+    private func request(
+        _ asset: PHAsset,
+        targetSize: CGSize,
+        contentMode: PHImageContentMode,
+        resizeMode: PHImageRequestOptionsResizeMode
+    ) async -> UIImage? {
         let options = PHImageRequestOptions()
         options.deliveryMode = .opportunistic
-        options.resizeMode = .fast
+        options.resizeMode = resizeMode
         // Miniatury są w telefonie nawet dla zdjęć trzymanych w iCloud, więc siatka
         // przewija się bez sieci. Pobieranie po sieci zdarza się dopiero przy
         // faktycznym przetwarzaniu, gdzie jest widoczne i opisane.
@@ -59,8 +84,8 @@ actor ThumbnailLoader {
             let box = SingleImageResume(continuation)
             manager.requestImage(
                 for: asset,
-                targetSize: size,
-                contentMode: .aspectFill,
+                targetSize: targetSize,
+                contentMode: contentMode,
                 options: options
             ) { image, info in
                 let isDegraded = (info?[PHImageResultIsDegradedKey] as? Bool) ?? false
@@ -70,6 +95,52 @@ actor ThumbnailLoader {
                     box.resume(with: image)
                 }
             }
+        }
+    }
+}
+
+/// Powiększony podgląd pokazywany po przytrzymaniu kafelka.
+///
+/// Rozmiar bierze się z proporcji zdjęcia, więc panorama nie wyjdzie kwadratem,
+/// a portret nie zostanie przycięty. `contextMenu` dopasowuje okienko do zawartości,
+/// dlatego widok musi znać swoje wymiary od razu — zanim obrazek się wczyta.
+struct PhotoPreview: View {
+    let asset: PHAsset
+
+    @Environment(\.displayScale) private var displayScale
+    @State private var image: UIImage?
+
+    private static let maxSide: CGFloat = 320
+
+    private var size: CGSize {
+        let width = CGFloat(asset.pixelWidth)
+        let height = CGFloat(asset.pixelHeight)
+        guard width > 0, height > 0 else {
+            return CGSize(width: Self.maxSide, height: Self.maxSide)
+        }
+        return width >= height
+            ? CGSize(width: Self.maxSide, height: Self.maxSide * height / width)
+            : CGSize(width: Self.maxSide * width / height, height: Self.maxSide)
+    }
+
+    var body: some View {
+        ZStack {
+            Color(.secondarySystemBackground)
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                ProgressView()
+            }
+        }
+        .frame(width: size.width, height: size.height)
+        .task(id: asset.localIdentifier) {
+            image = await ThumbnailLoader.shared.preview(
+                for: asset,
+                maxSide: Self.maxSide,
+                scale: displayScale
+            )
         }
     }
 }

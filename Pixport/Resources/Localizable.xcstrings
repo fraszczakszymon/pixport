@@ -835,19 +835,53 @@
         }
       }
     },
-    "library.selectAll": {
+    "library.preview.deselect": {
       "extractionState": "manual",
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zaznacz wszystkie"
+            "value": "Odznacz"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Select all"
+            "value": "Deselect"
+          }
+        }
+      }
+    },
+    "library.preview.select": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaznacz"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select"
+          }
+        }
+      }
+    },
+    "library.selection.empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz zdjęcia do przetworzenia"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose photos to process"
           }
         }
       }
@@ -1192,6 +1226,23 @@
         }
       }
     },
+    "result.savePhotos.nothing": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie ma czego zapisać: archiwum ZIP nie jest zdjęciem i biblioteka go nie przyjmie."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing to save: a ZIP archive is not a photo and the library will not take it."
+          }
+        }
+      }
+    },
     "result.savePhotos.success": {
       "extractionState": "manual",
       "localizations": {
@@ -1205,6 +1256,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Saved %d photos to your library."
+          }
+        }
+      }
+    },
+    "result.savePhotos.successAlbum": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zapisano %d zdjęć w albumie „%@”. Znajdziesz je też w Ostatnich — iOS zawsze dodaje nowe zdjęcia do biblioteki."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved %d photos to the “%@” album. They also appear in Recents — iOS always adds new photos to the library."
           }
         }
       }
@@ -1341,6 +1409,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Limit: %d MB"
+          }
+        }
+      }
+    },
+    "settings.estimate.rough": {
+      "extractionState": "manual",
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "szacunek zgrubny"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rough estimate"
           }
         }
       }
@@ -2106,23 +2191,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pixport"
-          }
-        }
-      }
-    },
-    "settings.estimate.rough": {
-      "extractionState": "manual",
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "szacunek zgrubny"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "rough estimate"
           }
         }
       }

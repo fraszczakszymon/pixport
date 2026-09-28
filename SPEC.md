@@ -31,6 +31,7 @@ Interfejs po polsku i angielsku. Bundle ID: `pl.froncek.pixport`.
 
 ```
 1. Galeria          siatka biblioteki, zaznaczanie wielokrotne
+                    najnowsze na dole, widok otwiera się przy dolnej krawędzi
                     pasek u dołu: „47 zdjęć · 182 MB"                      [Dalej]
 2. Ustawienia       wszystkie opcje naraz, wartości z ostatniego użycia
                     szacunek „~14 MB"                                  [Przetwórz]
@@ -51,6 +52,24 @@ przy pierwszym uruchomieniu (§11).
 - **Live Photo** → sama klatka, część filmowa odrzucana.
 - Bierzemy **wersję edytowaną** (zasób `fullSizePhoto`), a nie oryginał sprzed edycji —
   kto wyprostował horyzont, oczekuje wyprostowanego zdjęcia w paczce.
+
+**Kolejność i podgląd.** Siatka jest ułożona jak w systemowych Zdjęciach: najstarsze na
+górze, najnowsze na dole, a widok otwiera się przy dolnej krawędzi i trzyma się jej przy
+zmianie wysokości zawartości. **Przytrzymanie kafelka** pokazuje powiększony podgląd
+z jedną pozycją menu (zaznacz / odznacz) — przy kafelku wielkości kciuka nie da się
+inaczej rozpoznać, które ujęcie jest ostre.
+
+Kolejność wyświetlania **nie ma wpływu na numerację plików** — ta zawsze idzie rosnąco
+wg daty zrobienia (§8).
+
+**Świadomie nie ma przycisku „zaznacz wszystkie".** Przy rolce liczonej w tysiącach zdjęć
+nie jest on wygodą, tylko pułapką: jedno tapnięcie wybiera kilkanaście gigabajtów,
+a cofnięcie pomyłki wymaga drugiego.
+
+**Pasek u dołu jest widoczny zawsze**, także przy pustym zaznaczeniu (wtedy z nieaktywnym
+przyciskiem). Pokazywanie go dopiero po zaznaczeniu wyglądało zwinniej, ale zmieniało
+wysokość obszaru przewijania w najgorszym momencie: tuż po tapnięciu zdjęcia z dolnego
+rzędu pasek wyrastał dokładnie nad nim i zasłaniał resztę tego rzędu.
 
 **Zdjęcia w iCloud.** Przy włączonej optymalizacji pamięci oryginały nie leżą na
 urządzeniu. Pixport je **pobiera** (`isNetworkAccessAllowed = true`) i to jest **jedyne
@@ -168,8 +187,16 @@ Trzy drogi z ekranu wyniku:
 - **Udostępnij** — systemowy arkusz (Gmail, Signal, WhatsApp, AirDrop…).
 - **Zapisz w Plikach** — `UIDocumentPickerViewController(forExporting:)`, a przez niego
   Dysk Google, iCloud Drive, OneDrive, Dropbox. Krótsza droga „na dysk" niż przez arkusz.
-- **Zapisz w Zdjęciach** — uprawnienie `addOnly`, pytane dopiero przy pierwszym użyciu
-  tego przycisku.
+- **Zapisz w Zdjęciach** — kopie trafiają do albumu **„Pixport"**, zakładanego przy
+  pierwszym zapisie. Wymaga to uprawnienia `readWrite`, a nie `addOnly`: żeby dodać
+  zdjęcie do własnego albumu, trzeba go najpierw odnaleźć albo utworzyć, a jedno i drugie
+  wymaga odczytu biblioteki. Przy dostępie ograniczonym albumów nie da się ani czytać, ani
+  zakładać — zdjęcia zapisują się wtedy bez albumu, zamiast nie zapisać się wcale.
+
+  Uczciwe zastrzeżenie, które mówimy też użytkownikowi w komunikacie: **iOS nie pozwala
+  zapisać zdjęcia wyłącznie do albumu.** Każdy nowy zasób ląduje w bibliotece i pojawia
+  się w „Ostatnich"; album jest dodatkową etykietą wskazującą na ten sam zasób, a nie
+  osobnym katalogiem.
 
 **Limit 10 zdjęć.** Signal i Viber przyjmują naraz najwyżej dziesięć elementów.
 Nie da się tego wykryć: nie wiemy, którą aplikację użytkownik wybierze, a
