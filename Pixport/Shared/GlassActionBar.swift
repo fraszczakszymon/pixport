@@ -68,11 +68,17 @@ struct GlassActionBar<Summary: View, Action: View>: View {
 
 /// Odstępy pasa, odmierzone z systemowych Zdjęć.
 enum GlassBar {
-    /// Wysokość kapsuł — tyle, ile zajmuje przycisk w rozmiarze `.large`.
-    static let contentHeight: CGFloat = 52
+    /// Wysokość kapsuł. Musi być bliska ich rozmiarowi naturalnemu (~42 pt), bo ramka
+    /// jest wyrównana do dołu — każdy nadmiar zamienia się w dodatkowy odstęp u góry.
+    /// Przy 52 pt górny margines puchł do ~33 pt przy 21 pt od dołu i pas wyglądał krzywo.
+    static let contentHeight: CGFloat = 44
 
     /// Przerwa między zawartością ekranu a kapsułami.
-    static let topMargin: CGFloat = 16
+    ///
+    /// Dobrana tak, żeby zmierzony odstęp u góry zgadzał się z tym u dołu (~21 pt).
+    /// Dolny wynika z granicy bezpiecznego obszaru pomniejszonej o `bottomMargin`
+    /// i nie da się go ustawić wprost, więc równanie idzie od tej strony.
+    static let topMargin: CGFloat = 12
     /// Przesunięcie w dół względem granicy bezpiecznego obszaru — wartość UJEMNA.
     ///
     /// Granica bezpiecznego obszaru leży ok. 34 pt nad dolną krawędzią ekranu, więc pas
