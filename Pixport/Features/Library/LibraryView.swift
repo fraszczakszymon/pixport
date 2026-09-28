@@ -86,9 +86,15 @@ struct LibraryView: View {
                 }
             }
             // Widok otwiera się na dole, przy najnowszych zdjęciach, i trzyma się tej
-            // krawędzi, gdy zmieni się wysokość zawartości — na przykład gdy biblioteka
-            // dokończy wczytywanie albo przybędzie nowe zdjęcie.
-            .defaultScrollAnchor(.bottom)
+            // krawędzi, gdy zmieni się wysokość zawartości — na przykład gdy przybędzie
+            // nowe zdjęcie.
+            //
+            // Role są wskazane celowo. Samo `.defaultScrollAnchor(.bottom)` obejmuje
+            // również `.alignment`, a wtedy biblioteka z kilkoma zdjęciami przykleja się
+            // do dolnej krawędzi ekranu z pustą przestrzenią nad sobą. Pozycja startowa
+            // i reakcja na zmianę wysokości — tak; wyrównanie krótkiej zawartości — nie.
+            .defaultScrollAnchor(.bottom, for: .initialOffset)
+            .defaultScrollAnchor(.bottom, for: .sizeChanges)
         }
     }
 
