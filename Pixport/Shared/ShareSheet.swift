@@ -70,8 +70,15 @@ struct DocumentExporter: UIViewControllerRepresentable {
 ///
 /// `UIActivityItemSource` to jedyne miejsce, w którym możemy powiedzieć wprost
 /// „to jest JPEG", zamiast liczyć, że ktoś poprawnie odczyta rozszerzenie.
-/// **Nie jest to gwarancja** — o zachowaniu decyduje aplikacja odbierająca, do której
-/// nie mamy dostępu. To najsilniejszy sygnał, jaki wolno nam wysłać.
+///
+/// **Sprawdzone w realnym użyciu: to rozwiązało opisany przypadek z Dyskiem Google** —
+/// po zadeklarowaniu typu zdjęcia lądują tam pojedynczo. Jeśli więc kiedyś będzie
+/// kusiło, żeby wrócić do prostszego `activityItems: urls`, to jest właśnie ten powód,
+/// dla którego tego nie robimy.
+///
+/// Zastrzeżenie pozostaje: o zachowaniu decyduje aplikacja odbierająca, do której nie
+/// mamy dostępu. Deklaracja typu to najsilniejszy sygnał, jaki wolno nam wysłać — nie
+/// kontrola nad tym, co odbiorca z nim zrobi.
 final class SharedFile: NSObject, UIActivityItemSource {
     private let url: URL
     private let typeIdentifier: String
