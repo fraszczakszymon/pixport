@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 /// Systemowy arkusz udostępniania.
 ///
@@ -13,7 +14,8 @@ struct ShareSheet: UIViewControllerRepresentable {
     var onComplete: ((Bool) -> Void)?
 
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        let controller = UIActivityViewController(activityItems: urls, applicationActivities: nil)
+        let items = urls.map(SharedFile.init(url:))
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
         controller.completionWithItemsHandler = { _, completed, _, _ in
             // Uwaga: `completed` mówi tylko tyle, że arkusz się zamknął bez anulowania.
             // Nie wiemy, czy wiadomość faktycznie poszła ani do kogo — dlatego
@@ -55,6 +57,49 @@ struct DocumentExporter: UIViewControllerRepresentable {
         func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
             onComplete?(false)
         }
+    }
+}
+
+/// Plik przekazywany do arkusza z **jawnie zadeklarowanym typem zawartości**.
+///
+/// Goły `URL` zostawia odbiorcy domyślanie się, czym jest zawartość. Aplikacje rozgałęziają
+/// się na tej podstawie: systemowe Zdjęcia podają elementy zadeklarowane jako obrazy
+/// i odbiorca wgrywa je pojedynczo, a „plik" bez typu bywa traktowany inną ścieżką —
+/// u jednego z użytkowników Dysk Google pakował tak przekazane zdjęcia w archiwum,
+/// choć pakowanie po naszej stronie było wyłączone.
+///
+/// `UIActivityItemSource` to jedyne miejsce, w którym możemy powiedzieć wprost
+/// „to jest JPEG", zamiast liczyć, że ktoś poprawnie odczyta rozszerzenie.
+/// **Nie jest to gwarancja** — o zachowaniu decyduje aplikacja odbierająca, do której
+/// nie mamy dostępu. To najsilniejszy sygnał, jaki wolno nam wysłać.
+final class SharedFile: NSObject, UIActivityItemSource {
+    private let url: URL
+    private let typeIdentifier: String
+
+    init(url: URL) {
+        self.url = url
+        self.typeIdentifier = UTType(filenameExtension: url.pathExtension)?.identifier
+            ?? UTType.data.identifier
+    }
+
+    func activityViewControllerPlaceholderItem(_ controller: UIActivityViewController) -> Any {
+        url
+    }
+
+    /// Zawsze adres pliku, nigdy `UIImage` — obiekt obrazu aplikacja odbierająca ma prawo
+    /// wkleić w treść wiadomości i przekodować po swojemu.
+    func activityViewController(
+        _ controller: UIActivityViewController,
+        itemForActivityType activityType: UIActivity.ActivityType?
+    ) -> Any? {
+        url
+    }
+
+    func activityViewController(
+        _ controller: UIActivityViewController,
+        dataTypeIdentifierForActivityType activityType: UIActivity.ActivityType?
+    ) -> String {
+        typeIdentifier
     }
 }
 
